@@ -8,7 +8,6 @@ SNOWFLAKE_USER = st.secrets["SNOWFLAKE"]["SNOWFLAKE_USER"]
 SNOWFLAKE_PASSWORD = st.secrets["SNOWFLAKE"]["SNOWFLAKE_PASSWORD"]
 SNOWFLAKE_DATABASE = st.secrets["SNOWFLAKE"]["SNOWFLAKE_DATABASE"]
 
-OPENAI_API_KEY = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 def run_query_on_snowflake(query):
     """
