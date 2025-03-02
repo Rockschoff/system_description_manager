@@ -1,0 +1,8 @@
+streamlit
+snowflake-connector-python
+snowflake-connector-python[pandas]
+openai
+pandas
+numpy
+google
+protobuf
