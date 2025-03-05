@@ -93,10 +93,10 @@ class ColumnDescription():
     def update_column_description_text(self , new_value):
         if new_value==self.description:
             return
-
+        escaped_value = new_value.replace("'", "''")
         update_query = f"""
                             UPDATE {self.system_name}_SCHEMA.{self.system_name}_MAIN_TABLE_DESCRIPTION
-                            SET DESCRIPTION = '{new_value}'
+                            SET DESCRIPTION = '{escaped_value}'
                             WHERE COLUMN_NAME = '{self.column_name}'
                             """
         update_result = run_query_on_snowflake(update_query)
@@ -116,28 +116,42 @@ class SystemData:
         self.load_generation_prompts()
         self.load_column_descriptions()
 
-    def update_sql_generation_prompt(self , new_value : str):
-        if new_value==self.sql_generation_prompt:
+    def update_sql_generation_prompt(self, new_value: str):
+        # If the new value is the same as current, just return
+        if new_value == self.sql_generation_prompt:
             return
 
-        print(f"Updating to new value : {self.sql_generation_prompt[:10]}")
+        print(f"Updating to new value: {self.sql_generation_prompt[:10]}")
+
+        # Since run_query_on_snowflake doesn't accept parameters separately,
+        # we need to properly escape the string value to prevent SQL injection
+        # and handle special characters
+
+        # Replace single quotes with doubled single quotes for SQL safety
+        escaped_value = new_value.replace("'", "''")
+
         query = f"""
         UPDATE {self.system_name}_SCHEMA.{self.system_name}_PROMPT_TABLE
-        SET TEXT = '{new_value}'
+        SET TEXT = '{escaped_value}'
         WHERE NAME = 'SQL_GENERATION_PROMPT'
         """
+
+        # Update the instance variable
         self.sql_generation_prompt = new_value
+
+        # Execute the query with the properly escaped string value
         result = run_query_on_snowflake(query)
-        print(result , "Update Complete")
+
+        print(result, "Update Complete")
         return
 
     def update_graph_generation_prompt(self , new_value):
         if new_value==self.graph_generation_prompt:
             return
-
+        escaped_value = new_value.replace("'", "''")
         query = f"""
                 UPDATE {self.system_name}_SCHEMA.{self.system_name}_PROMPT_TABLE
-                SET TEXT = '{new_value}'
+                SET TEXT = '{escaped_value}'
                 WHERE NAME = 'GRAPH_GENERATION_PROMPT'
                 """
         self.graph_generation_prompt = new_value
